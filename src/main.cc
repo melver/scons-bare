@@ -1,3 +1,10 @@
+#include <gflags/gflags.h>
+
 #include "bar/example.hh"
 
-int main() { return bar::foo(); }
+int main(int argc, char *argv[]) {
+  gflags::SetUsageMessage("...");
+  gflags::ParseCommandLineFlags(&argc, &argv, true);
+
+  return bar::foo();
+}

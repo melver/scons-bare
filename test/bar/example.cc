@@ -1,10 +1,5 @@
-#define BOOST_TEST_DYN_LINK
-#include <boost/test/unit_test.hpp>
-
 #include "bar/example.hh"
 
-BOOST_AUTO_TEST_SUITE(mylib)
+#include <gtest/gtest.h>
 
-BOOST_AUTO_TEST_CASE(Foo) { BOOST_CHECK_EQUAL(bar::foo(), 42); }
-
-BOOST_AUTO_TEST_SUITE_END()
+TEST(mylib, Foo) { ASSERT_EQ(bar::foo(), 42); }

@@ -50,13 +50,16 @@ main['CPPLINT']      = os.environ.get('CPPLINT', 'cpplint')
 
 main.Append(
     CPPDEFINES = {},
-    CPPFLAGS   = ['-Wall', '-Werror'],
+    CPPFLAGS   = [
+        '-Wall', '-Werror',
+        '-isystem', Dir('#/third_party/gflags/include')
+        ],
     CPPPATH    = ['#/include'],
-    CFLAGS     = ['-std=c11'],
-    CXXFLAGS   = ['-std=c++14'],
-    LIBPATH    = [],
-    LIBS       = [],
-    LINKFLAGS  = [],
+    CFLAGS     = ['-std=c11', '-pthread'],
+    CXXFLAGS   = ['-std=c++14', '-pthread'],
+    LIBPATH    = ['#/third_party/gflags/lib'],
+    LIBS       = ['gflags'],
+    LINKFLAGS  = ['-pthread'],
 )
 
 # ------------- BUILD VARIANTS ------------- #

@@ -1,0 +1,11 @@
+-Wall
+-Werror
+-std=c++14
+-Iinclude
+-Isrc
+-isystem
+third_party/googletest/googletest/include
+-isystem
+third_party/googletest/googlemock/include
+-isystem
+third_party/gflags/include
