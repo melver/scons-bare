@@ -1,0 +1,33 @@
+# -*- mode:python -*-
+
+import os
+
+Import('env')
+env = env.Clone()
+
+sources = []
+for parent, dirnames, _ in os.walk(os.getcwd()):
+    for dirname in dirnames:
+        relpath = os.path.relpath(os.path.join(parent, dirname), os.getcwd())
+        sources.append(Glob("%s/*.c*" % relpath))
+
+#lib_mylib = env.SharedLibrary('../lib/mylib', sources)
+lib_mylib = env.StaticLibrary('../lib/mylib', sources)
+
+env.Prepend(
+    LIBS = [lib_mylib]
+    #LINKFLAGS = ["-Wl,-rpath=%s" % Dir("../lib").abspath]
+)
+
+bin_hello = env.Program(
+    '../bin/hello',
+    ['main.cc']
+)
+
+env.Alias("install", env.Install(os.path.join(env['PREFIX'], "lib"),
+                                 lib_mylib))
+
+env.Alias("install", env.Install(os.path.join(env['PREFIX'], "bin"),
+                                 bin_hello))
+
+# vim: set ft=python :

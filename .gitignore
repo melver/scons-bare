@@ -1,0 +1,5 @@
+*.pyc
+*.swp
+.sconsign.dblite
+apidoc/html
+build/
