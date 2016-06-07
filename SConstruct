@@ -86,6 +86,8 @@ else:
 if GetOption('compile_commands'):
     main.Tool('compile_commands')
     main.CompileCommands('build')
+    if BUILD_TARGETS and 'build/compile_commands.json' not in BUILD_TARGETS:
+        BUILD_TARGETS.append('build/compile_commands.json')
 
 main.SConscript('build/src/SConscript' , {'env' : main})
 main.SConscript('build/test/SConscript', {'env' : main})
