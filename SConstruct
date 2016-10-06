@@ -16,6 +16,12 @@ AddOption('--release',
     default=False,
 )
 
+AddOption('--harden',
+    help="Enable hardening compiler flags.",
+    action='store_true',
+    default=False,
+)
+
 AddOption('--dbgopt',
     help="Debug build with some optimizations.",
     action='store_true',
@@ -68,8 +74,11 @@ main.VariantDir('build/src',  'src',  duplicate=False)
 main.VariantDir('build/test', 'test', duplicate=False)
 
 if GetOption('release'):
-    main.Append(CPPDEFINES = ['NDEBUG'])
-    main.Append(CPPFLAGS = ['-O2'])
+    main.Append(CPPDEFINES = ['NDEBUG'],
+                CPPFLAGS = ['-O2'])
+
+    if GetOption('harden'):
+        main.Append(CPPDEFINES = {'_FORTIFY_SOURCE' : 2})
 else:
     main.Append(CPPFLAGS = ['-g'])
 
@@ -80,6 +89,19 @@ else:
         sanitizers = ['undefined', 'address']
         san_flags = ['-fsanitize={}'.format(s) for s in sanitizers]
         main.Append(CPPFLAGS  = san_flags, LINKFLAGS = san_flags)
+
+if GetOption('harden'):
+    main.Append(CPPFLAGS = [
+                    # More warnings
+                    '-Wconversion', '-Wsign-conversion', '-Wformat',
+                    '-Wformat-security',
+                    # Stack protection
+                    '-fstack-protector-strong', '--param', 'ssp-buffer-size=4',
+                    # Signed integer overflow checks
+                    '-ftrapv'
+                ],
+                # Enable Full RELRO
+                LINKFLAGS = ['-Wl,-z,relro,-z,now'])
 
 # ------------- COLLECT SOURCES/TARGETS ------------- #
 
@@ -113,7 +135,7 @@ Phony(
              "$$(git ls-files | grep -E '\.(hpp|hh|cpp|cc|cxx)$$')",
 
     tidy = "$CLANG_TIDY -header-filter='.*' "
-             "-checks='-*,clang-analyzer-*,google*,misc*,-misc-unused-parameters,performance*' "
+             "-checks='-*,clang-analyzer-*,google*,misc*,-misc-unused-parameters,performance*,modernize*' "
              "-p build/compile_commands.json "
              "$$(git ls-files | grep -E '\.(cpp|cc|cxx|c)$$')",
 )
